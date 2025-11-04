@@ -3,3 +3,16 @@
 
 # But not these files (already committed)
 !.gitignore
+!_Assets/
+
+!_Assets/Scripts/
+!_Assets/Scripts/**
+
+!_Assets/ScriptableObj/
+!_Assets/ScriptableObj/**
+
+!_Assets\Prefabs/
+!_Assets\Prefabs/**
+
+!_Assets\PrefabsVisuals/
+!_Assets\PrefabsVisuals/**
