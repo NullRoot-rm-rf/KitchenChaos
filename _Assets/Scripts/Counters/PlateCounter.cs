@@ -34,7 +34,6 @@ public class PlateCounter : BaseCounter
     {
         if (!Player.Instance.HasKitchenObj() && plateSpawned != 0)
         {
-            Debug.Log(plateSpawned);
             plateSpawned--;
 
             KitchenObj.SpawnKitchenObj(kitchenObjSO, Player.Instance);

@@ -14,26 +14,38 @@ public class CuttingCounter : BaseCounter, IHasProgress
     private int cuttingProgress;
     public override void Interact()
     {
-        if (!HasKitchenObj() && Player.Instance.HasKitchenObj())
+        if (!HasKitchenObj())
         {
-            //there is no kitchenObj here, so if the player has one, give it to the counter
-            if (HasRecipeWithInput(Player.Instance.GetKitchenObj().GetKitchenObjSO()))
+            if (Player.Instance.HasKitchenObj())
             {
-                Player.Instance.GetKitchenObj().SetKitchenObjParent(this);
-                //reset cutting progress
-                cuttingProgress = 0;
-                //invoke progress changed event to update progress bar
-                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                //there is no kitchenObj here, so if the player has one, give it to the counter
+                if (HasRecipeWithInput(Player.Instance.GetKitchenObj().GetKitchenObjSO()))
                 {
-                    progressNormalized = (float)cuttingProgress / GetCuttingRecipeSOWithInput(GetKitchenObj().GetKitchenObjSO()).cuttingProgressMax
-                });
+                    Player.Instance.GetKitchenObj().SetKitchenObjParent(this);
+                    //reset cutting progress
+                    cuttingProgress = 0;
+                    //invoke progress changed event to update progress bar
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                    {
+                        progressNormalized = (float)cuttingProgress / GetCuttingRecipeSOWithInput(GetKitchenObj().GetKitchenObjSO()).cuttingProgressMax
+                    });
+                }
             }
         }
         else
         {
             //there is a kitchenaObj here, so if the player does not have one, give it to the player
-            if (!Player.Instance.HasKitchenObj() && HasKitchenObj())
+            if (!Player.Instance.HasKitchenObj())
             {
+                //checking if player has a plate for picking stuff on it
+                if (Player.Instance.GetKitchenObj().TryGetPlate(out PlateKitchenObj plateKitchenObj))
+                {
+                    if (plateKitchenObj.TryAddIngredient(GetKitchenObj().GetKitchenObjSO()))
+                    {
+                        GetKitchenObj().DestroySelf();
+                    }
+                }
+
                 base.GetKitchenObj().SetKitchenObjParent(Player.Instance);
 
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs

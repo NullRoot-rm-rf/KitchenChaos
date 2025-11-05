@@ -91,39 +91,66 @@ public class StoveCounter : BaseCounter, IHasProgress
 
     public override void Interact()
     {
-        if (!HasKitchenObj() && Player.Instance.HasKitchenObj())
+        if (!HasKitchenObj())
         {
-            KitchenObjSO inputSO = Player.Instance.GetKitchenObj().GetKitchenObjSO();
-            if (HasRecipeWithInput(inputSO))
+            if (Player.Instance.HasKitchenObj())
             {
-                Player.Instance.GetKitchenObj().SetKitchenObjParent(this);
-                state = CookingStates.Cooking;
-                OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
+                KitchenObjSO inputSO = Player.Instance.GetKitchenObj().GetKitchenObjSO();
+                if (HasRecipeWithInput(inputSO))
+                {
+                    Player.Instance.GetKitchenObj().SetKitchenObjParent(this);
+                    state = CookingStates.Cooking;
+                    OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
 
-                kitchenObjSO = GetKitchenObj().GetKitchenObjSO();
-                fryingRecipeSO = GetCookingRecipeSOWithInput(kitchenObjSO);
+                    kitchenObjSO = GetKitchenObj().GetKitchenObjSO();
+                    fryingRecipeSO = GetCookingRecipeSOWithInput(kitchenObjSO);
+
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                    {
+                        progressNormalized = fryingProgress / fryingRecipeSO.fryingProgressMax
+                    });
+
+                    fryingProgress = 0f;
+                }
+            }
+        }
+        else
+        {
+            if (!Player.Instance.HasKitchenObj())
+            {
+                //checking if player has a plate for picking stuff on it
+                if (Player.Instance.GetKitchenObj().TryGetPlate(out PlateKitchenObj plateKitchenObj))
+                {
+                    if (plateKitchenObj.TryAddIngredient(GetKitchenObj().GetKitchenObjSO()))
+                    {
+                        GetKitchenObj().DestroySelf();
+
+                        //changing the state machine and fireing the even as the counter is now empty
+                        state = CookingStates.Idle;
+                        OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
+
+                        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                        {
+                            progressNormalized = 0f
+                        });
+
+                        fryingProgress = 0f;
+                        burningProgress = 0f;
+                    }
+                }
+
+                GetKitchenObj().SetKitchenObjParent(Player.Instance);
+                state = CookingStates.Idle;
+                OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
 
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                 {
-                    progressNormalized = fryingProgress/fryingRecipeSO.fryingProgressMax
+                    progressNormalized = 0f
                 });
 
-               fryingProgress = 0f;
+                fryingProgress = 0f;
+                burningProgress = 0f;
             }
-        }
-        else if (!Player.Instance.HasKitchenObj() && HasKitchenObj())
-        {
-            GetKitchenObj().SetKitchenObjParent(Player.Instance);
-            state = CookingStates.Idle;
-            OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
-
-            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-            {
-                progressNormalized = 0f
-            });
-
-            fryingProgress = 0f;
-            burningProgress = 0f;
         }
     }
 
