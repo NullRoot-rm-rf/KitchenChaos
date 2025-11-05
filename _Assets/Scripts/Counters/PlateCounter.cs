@@ -17,7 +17,7 @@ public class PlateCounter : BaseCounter
     private void Update()
     {
         if (plateSpawned != 4) counntDownOfPlateSpawning += Time.deltaTime;
-        if (counntDownOfPlateSpawning > 6f && plateSpawned < 4)
+        if (counntDownOfPlateSpawning > 8f && plateSpawned < 4)
         {
             Transform plateVisual = Instantiate(kitchenObjSO.prefab, GetKitchenObjPlacingPoint());
 

@@ -42,6 +42,11 @@ public class StoveCounter : BaseCounter, IHasProgress
                     if (fryingRecipeSO != null)
                     {
                         fryingProgress += Time.deltaTime;
+                        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                        {
+                            progressNormalized = fryingProgress / fryingRecipeSO.fryingProgressMax
+                        });
+
                         if (fryingProgress >= fryingRecipeSO.fryingProgressMax)
                         {
                             GetKitchenObj().DestroySelf();
@@ -50,11 +55,6 @@ public class StoveCounter : BaseCounter, IHasProgress
                             state = CookingStates.Cooked;
 
                             OnStateChange?.Invoke(this , new OnStateChangedEventArgs(){state = state});
-
-                            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-                            {
-                                progressNormalized = fryingProgress / fryingRecipeSO.fryingProgressMax
-                            });
 
                             fryingProgress = 0f;
                             break;
@@ -66,6 +66,11 @@ public class StoveCounter : BaseCounter, IHasProgress
                 burningRecipeSO = GetBurningRecipeSOWithInput(kitchenObjSO);
 
                 burningProgress += Time.deltaTime;
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+                {
+                    progressNormalized = burningProgress / burningRecipeSO.burningProgressMax
+                });
+
                 if (burningProgress >= burningRecipeSO.burningProgressMax && HasKitchenObj())
                 {
                     GetKitchenObj().DestroySelf();
@@ -74,11 +79,6 @@ public class StoveCounter : BaseCounter, IHasProgress
                     state = CookingStates.Burned;
 
                     OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
-
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-                    {
-                        progressNormalized = burningProgress / burningRecipeSO.burningProgressMax
-                    });
 
                     burningProgress = 0f;
                     break;
