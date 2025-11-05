@@ -34,8 +34,7 @@ public class CuttingCounter : BaseCounter, IHasProgress
         }
         else
         {
-            //there is a kitchenaObj here, so if the player does not have one, give it to the player
-            if (!Player.Instance.HasKitchenObj())
+            if (Player.Instance.HasKitchenObj())
             {
                 //checking if player has a plate for picking stuff on it
                 if (Player.Instance.GetKitchenObj().TryGetPlate(out PlateKitchenObj plateKitchenObj))
@@ -45,6 +44,10 @@ public class CuttingCounter : BaseCounter, IHasProgress
                         GetKitchenObj().DestroySelf();
                     }
                 }
+            }
+            //there is a kitchenaObj here, so if the player does not have one, give it to the player
+            else
+            {
 
                 base.GetKitchenObj().SetKitchenObjParent(Player.Instance);
 

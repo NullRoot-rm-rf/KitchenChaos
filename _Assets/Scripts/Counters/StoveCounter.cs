@@ -116,7 +116,7 @@ public class StoveCounter : BaseCounter, IHasProgress
         }
         else
         {
-            if (!Player.Instance.HasKitchenObj())
+            if (Player.Instance.HasKitchenObj())
             {
                 //checking if player has a plate for picking stuff on it
                 if (Player.Instance.GetKitchenObj().TryGetPlate(out PlateKitchenObj plateKitchenObj))
@@ -125,10 +125,10 @@ public class StoveCounter : BaseCounter, IHasProgress
                     {
                         GetKitchenObj().DestroySelf();
 
+
                         //changing the state machine and fireing the even as the counter is now empty
                         state = CookingStates.Idle;
                         OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
-
                         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                         {
                             progressNormalized = 0f
@@ -138,7 +138,9 @@ public class StoveCounter : BaseCounter, IHasProgress
                         burningProgress = 0f;
                     }
                 }
-
+            }
+            else
+            {
                 GetKitchenObj().SetKitchenObjParent(Player.Instance);
                 state = CookingStates.Idle;
                 OnStateChange?.Invoke(this, new OnStateChangedEventArgs() { state = state });
