@@ -48,7 +48,6 @@ public class CuttingCounter : BaseCounter, IHasProgress
             //there is a kitchenaObj here, so if the player does not have one, give it to the player
             else
             {
-
                 base.GetKitchenObj().SetKitchenObjParent(Player.Instance);
 
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
