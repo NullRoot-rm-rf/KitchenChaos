@@ -10,7 +10,7 @@ public class PlateVisual : MonoBehaviour
     public struct PlateVisualList
     {
         public KitchenObjSO KitchenObjSO;
-        public GameObject ganeObject;
+        public GameObject gameObject;
     }
 
     [SerializeField] List<PlateVisualList> plateVisualList;
@@ -20,7 +20,7 @@ public class PlateVisual : MonoBehaviour
         plateKitchenObj.OnAddingIngredient += PlateKitchenObj_OnAddingIngredient;
         foreach (PlateVisualList plateVisualList in plateVisualList)
         {
-            plateVisualList.ganeObject.SetActive(false);
+            plateVisualList.gameObject.SetActive(false);
         }
     }
 
@@ -30,7 +30,7 @@ public class PlateVisual : MonoBehaviour
         {
             if (plateVisualList.KitchenObjSO  == e.kitchenObjSO)
             {
-                plateVisualList.ganeObject.SetActive(true);
+                plateVisualList.gameObject.SetActive(true);
             }
         }
     }
